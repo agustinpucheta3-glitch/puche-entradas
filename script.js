@@ -32,8 +32,7 @@ function fillHeaderAndDescription() {
     document.getElementById(id).textContent = evt.direccion;
   });
 
-  document.getElementById("org-nombre").textContent = CONFIG.organizador.nombre;
-  document.getElementById("org-desc").textContent = CONFIG.organizador.descripcion;
+  document.getElementById("org-texto").textContent = CONFIG.organizador.texto;
 
   const flyerCard = document.getElementById("flyer-card");
   if (CONFIG.flyerImagen) {

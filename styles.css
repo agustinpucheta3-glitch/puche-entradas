@@ -331,13 +331,10 @@ body {
   gap: 4px;
 }
 
-.organizer-card strong {
-  font-size: 14px;
-}
-
 .organizer-card span {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--text-dim);
+  font-weight: 600;
 }
 
 .toast {

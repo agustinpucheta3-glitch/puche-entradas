@@ -24,8 +24,7 @@ const CONFIG = {
   },
 
   organizador: {
-    nombre: "PUCHE",
-    descripcion: "Producción y organización del evento",
+    texto: "Evento organizado por La Fechita",
   },
 
   // Si querés mostrar un flyer/banner, poné el nombre del archivo de imagen
