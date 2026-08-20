@@ -54,7 +54,7 @@ const CONFIG = {
 
   preventa2: {
     nombre: "Preventa 2",
-    precio: null,      // completar cuando definan el precio
+    precio: 8000,
     stock: null,        // completar cuando definan el stock
     activa: false,      // pasar a true cuando se agote la preventa 1 (y ya tengas precios + links cargados)
     agotada: false,
