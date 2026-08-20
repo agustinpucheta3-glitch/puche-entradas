@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PUCHE + JOYZE + FENICIA RUBÍ — Entradas</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="event-title-block">
+      <h1 id="evt-nombre">PUCHE + JOYZE + FENICIA RUBÍ</h1>
+      <p class="event-date">
+        <svg viewBox="0 0 24 24" class="icon"><path d="M7 2v3M17 2v3M3 9h18M5 5h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span id="evt-fecha">Jueves 25 de Septiembre - 21:00 hrs.</span>
+      </p>
+    </div>
+    <div class="event-place-block">
+      <svg viewBox="0 0 24 24" class="icon pin"><path d="M12 22s7-7.58 7-12A7 7 0 0 0 5 10c0 4.42 7 12 7 12z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="10" r="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+      <div>
+        <strong id="evt-lugar">Moscú</strong>
+        <span id="evt-direccion">Av. Raúl Scalabrini Ortiz 343, CABA</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+
+  <main class="content">
+
+    <section class="ticket-box">
+      <table class="ticket-table">
+        <thead>
+          <tr>
+            <th>Tipo de Ticket</th>
+            <th>Valor</th>
+            <th>Cantidad</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr id="row-p1">
+            <td>
+              <span class="tipo-nombre" id="p1-nombre">Preventa 1</span>
+              <span class="badge" id="p1-badge">Disponible</span>
+            </td>
+            <td id="p1-precio" class="valor-cell">$6.500</td>
+            <td>
+              <select id="p1-qty" class="qty-select"></select>
+            </td>
+          </tr>
+          <tr id="row-p2">
+            <td>
+              <span class="tipo-nombre" id="p2-nombre">Preventa 2</span>
+              <span class="badge" id="p2-badge">Próximamente</span>
+            </td>
+            <td id="p2-precio" class="valor-cell">A confirmar</td>
+            <td>
+              <select id="p2-qty" class="qty-select" disabled></select>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="total-row">
+        Total: <strong id="total-general">$0</strong>
+      </div>
+
+      <form class="buyer-form" id="buy-form">
+        <label>
+          Nombre y apellido
+          <input type="text" name="nombre" id="buyer-nombre" required />
+        </label>
+        <label>
+          Email (a esta casilla te enviamos la entrada)
+          <input type="email" name="email" id="buyer-email" required />
+        </label>
+        <button type="submit" class="buy-btn" id="buy-btn">ADQUIRIR</button>
+        <p class="form-note">Al confirmar te vamos a redirigir a Mercado Pago para completar el pago.</p>
+      </form>
+    </section>
+
+    <section class="description-box">
+      <h2>Sobre el evento</h2>
+      <p id="evt-descripcion">
+        <strong id="evt-nombre-2">PUCHE + JOYZE + FENICIA RUBÍ</strong> en vivo el
+        <span id="evt-fecha-2">25 de Septiembre</span> en <span id="evt-lugar-2">Moscú</span>,
+        <span id="evt-direccion-2">Av. Raúl Scalabrini Ortiz 343, CABA</span>.
+      </p>
+      <p>Las entradas se envían por email a la casilla que ingreses, una vez acreditado el pago.</p>
+    </section>
+
+  </main>
+
+  <aside class="sidebar">
+    <div class="flyer-card" id="flyer-card">
+      <span id="flyer-fallback-text">PUCHE + JOYZE<br>+ FENICIA RUBÍ</span>
+    </div>
+    <div class="organizer-card">
+      <strong id="org-nombre">PUCHE</strong>
+      <span id="org-desc">Producción y organización del evento</span>
+    </div>
+  </aside>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="config.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
