@@ -18,7 +18,9 @@
 const CONFIG = {
   evento: {
     nombre: "PUCHE + JOYZE + FENICIA RUBÍ",
-    fecha: "Jueves 25 de Septiembre - 21:00 hrs.",
+    fecha: "Jueves 25 de Septiembre - 20:00 hrs.",
+    // Fecha y hora exacta (con huso horario de Argentina) para el contador.
+    fechaISO: "2026-09-25T20:00:00-03:00",
     lugar: "Moscú",
     direccion: "Av. Raúl Scalabrini Ortiz 343, CABA",
   },

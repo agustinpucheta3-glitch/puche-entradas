@@ -112,7 +112,41 @@ function updateTotal() {
   const p2qty = parseInt(document.getElementById("p2-qty").value, 10) || 0;
   const p1total = p1qty * (CONFIG.preventa1.precio || 0);
   const p2total = p2qty * (CONFIG.preventa2.precio || 0);
-  document.getElementById("total-general").textContent = formatPrice(p1total + p2total);
+  const totalEl = document.getElementById("total-general");
+  totalEl.textContent = formatPrice(p1total + p2total);
+  totalEl.classList.remove("pulse");
+  void totalEl.offsetWidth;
+  totalEl.classList.add("pulse");
+}
+
+function setupCountdown() {
+  const bar = document.getElementById("countdown-bar");
+  const target = new Date(CONFIG.evento.fechaISO).getTime();
+  const label = bar.querySelector(".countdown-label");
+  const units = bar.querySelector(".countdown-units");
+  const elDays = document.getElementById("cd-days");
+  const elHours = document.getElementById("cd-hours");
+  const elMinutes = document.getElementById("cd-minutes");
+  const elSeconds = document.getElementById("cd-seconds");
+
+  const pad = (n) => String(n).padStart(2, "0");
+
+  function tick() {
+    const diff = target - Date.now();
+    if (diff <= 0) {
+      label.textContent = "¡La fechita ya empezó!";
+      units.style.display = "none";
+      clearInterval(timer);
+      return;
+    }
+    elDays.textContent = pad(Math.floor(diff / 86400000));
+    elHours.textContent = pad(Math.floor((diff / 3600000) % 24));
+    elMinutes.textContent = pad(Math.floor((diff / 60000) % 60));
+    elSeconds.textContent = pad(Math.floor((diff / 1000) % 60));
+  }
+
+  tick();
+  const timer = setInterval(tick, 1000);
 }
 
 function pickActiveSelection() {
@@ -196,5 +230,6 @@ document.addEventListener("DOMContentLoaded", () => {
   setupRow("p1", CONFIG.preventa1);
   setupRow("p2", CONFIG.preventa2);
   setupBuyForm();
+  setupCountdown();
   updateTotal();
 });
