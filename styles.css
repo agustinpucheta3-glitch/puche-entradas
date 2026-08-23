@@ -515,7 +515,13 @@ body::before {
   padding: 14px 16px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
+}
+
+.organizer-logo {
+  width: 100%;
+  height: auto;
+  display: block;
 }
 
 .organizer-card span {
