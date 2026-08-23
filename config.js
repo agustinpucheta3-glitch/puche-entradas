@@ -67,3 +67,9 @@ const CONFIG = {
     },
   },
 };
+
+// Permite que la función de Netlify (netlify/functions/mp-webhook.js)
+// reutilice el mismo emailDestino sin duplicarlo. No afecta al navegador.
+if (typeof module !== "undefined") {
+  module.exports = CONFIG;
+}
