@@ -26,7 +26,7 @@ const CONFIG = {
   },
 
   organizador: {
-    texto: "Evento organizado por La Fechita",
+    texto: "Evento organizado por Confluencia",
   },
 
   // Si querés mostrar un flyer/banner, poné el nombre del archivo de imagen
