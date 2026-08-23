@@ -1,14 +1,16 @@
 :root {
-  --bg: #f4f4f5;
+  --bg: #f7eced;
   --panel: #ffffff;
-  --border: #e2e2e5;
-  --text: #232326;
-  --text-dim: #6b6b70;
-  --accent: #f5a623;
-  --accent-dark: #c9820f;
+  --border: #ecdadb;
+  --text: #2a1e22;
+  --text-dim: #7a6469;
+  --accent: #e68057;
+  --accent-dark: #a2574f;
+  --accent-2: #993a8b;
+  --accent-3: #bf7587;
   --ok: #1fa15a;
   --ok-bg: #e6f6ed;
-  --off-bg: #ececee;
+  --off-bg: #f1e6e7;
   --font: 'Helvetica Neue', Arial, sans-serif;
 }
 
@@ -27,23 +29,27 @@ body::before {
   content: "";
   position: fixed;
   inset: 0;
-  background: url('fondo.jpg') center/cover no-repeat;
-  filter: blur(30px) brightness(0.95);
-  transform: scale(1.15);
-  z-index: -2;
+  background:
+    radial-gradient(circle at 12% 15%, var(--accent-2) 0%, transparent 55%),
+    radial-gradient(circle at 88% 20%, var(--accent) 0%, transparent 55%),
+    radial-gradient(circle at 30% 92%, var(--accent-3) 0%, transparent 60%),
+    linear-gradient(135deg, var(--accent-dark), var(--accent-2) 60%, var(--accent));
+  z-index: -3;
 }
 
 body::after {
   content: "";
   position: fixed;
   inset: 0;
-  background: rgba(244, 244, 245, 0.78);
-  z-index: -1;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.25;
+  mix-blend-mode: overlay;
+  z-index: -2;
 }
 
 /* TOPBAR */
 .topbar {
-  background: #ececee;
+  background: var(--panel);
   border-bottom: 1px solid var(--border);
 }
 
@@ -255,7 +261,7 @@ body::after {
 .buy-btn {
   margin-top: 4px;
   background: var(--accent);
-  color: #2b2200;
+  color: #fff;
   border: none;
   border-radius: 6px;
   padding: 14px;
@@ -316,7 +322,7 @@ body::after {
 .flyer-card {
   aspect-ratio: 3 / 4;
   border-radius: 10px;
-  background: linear-gradient(160deg, #1a1a1d, #3a2a12 60%, #f5a623);
+  background: linear-gradient(160deg, var(--accent-2), var(--accent-dark) 45%, var(--accent) 75%, var(--accent-3));
   display: flex;
   align-items: center;
   justify-content: center;
