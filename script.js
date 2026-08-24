@@ -217,17 +217,18 @@ function setupBuyForm() {
       if (!res.ok) throw new Error("form error");
 
       try {
-        await fetch("/.netlify/functions/send-ticket", {
+        await fetch("/.netlify/functions/save-pending-purchase", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             nombre: nombreInput.value,
             email: emailInput.value,
             cantidad: seleccion.cantidad,
+            total: seleccion.total,
           }),
         });
-      } catch (ticketErr) {
-        console.error("No se pudo enviar el mail de la tarjeta", ticketErr);
+      } catch (pendingErr) {
+        console.error("No se pudo guardar la compra pendiente", pendingErr);
       }
 
       window.location.href = seleccion.mpLink;
