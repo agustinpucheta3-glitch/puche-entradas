@@ -216,6 +216,20 @@ function setupBuyForm() {
 
       if (!res.ok) throw new Error("form error");
 
+      try {
+        await fetch("/.netlify/functions/send-ticket", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            nombre: nombreInput.value,
+            email: emailInput.value,
+            cantidad: seleccion.cantidad,
+          }),
+        });
+      } catch (ticketErr) {
+        console.error("No se pudo enviar el mail de la tarjeta", ticketErr);
+      }
+
       window.location.href = seleccion.mpLink;
     } catch (err) {
       showToast("Hubo un error al registrar tus datos. Probá de nuevo.");
