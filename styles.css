@@ -37,6 +37,21 @@ body::before {
   z-index: -1;
 }
 
+body::after {
+  content: "";
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 90vmin;
+  height: 90vmin;
+  transform: translate(-50%, -50%);
+  background: url('confluencia-cross.png') center/contain no-repeat;
+  opacity: 0.08;
+  mix-blend-mode: multiply;
+  z-index: -1;
+  pointer-events: none;
+}
+
 .module-tag {
   font-family: var(--font-mono);
   font-size: 11px;
