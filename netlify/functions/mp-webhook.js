@@ -3,9 +3,9 @@
 // No hace falta tocar este archivo.
 //
 // Qué hace: Mercado Pago avisa acá cada vez que cambia el estado
-// de un pago de tu cuenta. Si el pago está "approved":
-//   1. Busca, entre las compras pendientes guardadas por
-//      save-pending-purchase.js, la más antigua con ese mismo monto.
+// de un pago creado por create-preference.js. Si el pago está "approved":
+//   1. Busca, por la referencia única del pago (external_reference),
+//      los datos del comprador guardados al crear el pago.
 //   2. Si la encuentra, le manda a ESA persona un mail con su
 //      tarjeta (recién ahora que el pago está confirmado).
 //   3. Siempre te avisa a vos también, con los datos del pago y,
@@ -35,7 +35,9 @@ function getPendingStore() {
   });
 }
 
-async function buscarCompradorPendiente(monto) {
+async function buscarCompradorPorReferencia(referencia) {
+  if (!referencia) return null;
+
   if (!process.env.BLOBS_SITE_ID || !process.env.BLOBS_TOKEN) {
     console.error("Falta configurar BLOBS_SITE_ID / BLOBS_TOKEN en Netlify");
     return null;
@@ -43,22 +45,16 @@ async function buscarCompradorPendiente(monto) {
 
   try {
     const store = getPendingStore();
-    const key = `amount-${monto}`;
-    const lista = (await store.get(key, { type: "json" })) || [];
+    const key = `ref-${referencia}`;
+    const comprador = await store.get(key, { type: "json" });
 
-    if (lista.length === 0) return null;
-
-    const comprador = lista.shift(); // el más antiguo primero (FIFO)
-
-    if (lista.length > 0) {
-      await store.setJSON(key, lista);
-    } else {
+    if (comprador) {
       await store.delete(key);
     }
 
     return comprador;
   } catch (err) {
-    console.error("Error buscando comprador pendiente:", err);
+    console.error("Error buscando comprador por referencia:", err);
     return null;
   }
 }
@@ -137,7 +133,7 @@ exports.handler = async (event) => {
       return { statusCode: 200, body: `estado: ${payment.status}` };
     }
 
-    const comprador = await buscarCompradorPendiente(payment.transaction_amount);
+    const comprador = await buscarCompradorPorReferencia(payment.external_reference);
 
     let tarjetaEnviada = false;
     if (comprador) {

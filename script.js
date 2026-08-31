@@ -42,11 +42,7 @@ function fillHeaderAndDescription() {
   }
 }
 
-function linkCargado(link) {
-  return !!link && !link.startsWith("PEGAR_");
-}
-
-function buildQtyOptions(selectEl, cantidadesValidas, disabledLabel) {
+function buildQtyOptions(selectEl, max, disabledLabel) {
   selectEl.innerHTML = "";
   if (disabledLabel) {
     const opt = document.createElement("option");
@@ -57,22 +53,17 @@ function buildQtyOptions(selectEl, cantidadesValidas, disabledLabel) {
     return;
   }
 
-  const opt0 = document.createElement("option");
-  opt0.value = "0";
-  opt0.textContent = "0";
-  selectEl.appendChild(opt0);
-
-  cantidadesValidas.forEach((i) => {
+  for (let i = 0; i <= max; i++) {
     const opt = document.createElement("option");
     opt.value = i;
     opt.textContent = i;
     selectEl.appendChild(opt);
-  });
+  }
 
-  selectEl.disabled = cantidadesValidas.length === 0;
+  selectEl.disabled = false;
 }
 
-function setupRow(key, data) {
+function setupRow(key, data, maxPorCompra) {
   const badgeEl = document.getElementById(`${key}-badge`);
   const precioEl = document.getElementById(`${key}-precio`);
   const qtySelect = document.getElementById(`${key}-qty`);
@@ -93,17 +84,12 @@ function setupRow(key, data) {
   }
 
   if (!habilitada) {
-    buildQtyOptions(qtySelect, [], data.agotada ? "Agotado" : "—");
+    buildQtyOptions(qtySelect, 0, data.agotada ? "Agotado" : "—");
     return;
   }
 
-  const cantidadesValidas = Object.keys(data.mpLinks || {})
-    .map(Number)
-    .filter((qty) => (data.stock ? qty <= data.stock : true))
-    .filter((qty) => linkCargado(data.mpLinks[qty]))
-    .sort((a, b) => a - b);
-
-  buildQtyOptions(qtySelect, cantidadesValidas, null);
+  const tope = data.stock ? Math.min(maxPorCompra, data.stock) : maxPorCompra;
+  buildQtyOptions(qtySelect, tope, null);
   qtySelect.addEventListener("change", updateTotal);
 }
 
@@ -155,18 +141,18 @@ function pickActiveSelection() {
 
   if (p1qty > 0) {
     return {
+      preventaKey: "preventa1",
       data: CONFIG.preventa1,
       cantidad: p1qty,
       total: p1qty * CONFIG.preventa1.precio,
-      mpLink: (CONFIG.preventa1.mpLinks || {})[p1qty],
     };
   }
   if (p2qty > 0) {
     return {
+      preventaKey: "preventa2",
       data: CONFIG.preventa2,
       cantidad: p2qty,
       total: p2qty * CONFIG.preventa2.precio,
-      mpLink: (CONFIG.preventa2.mpLinks || {})[p2qty],
     };
   }
   return null;
@@ -184,11 +170,6 @@ function setupBuyForm() {
     const seleccion = pickActiveSelection();
     if (!seleccion) {
       showToast("Elegí una cantidad de entradas antes de continuar.");
-      return;
-    }
-
-    if (!linkCargado(seleccion.mpLink)) {
-      showToast("Falta cargar el link de Mercado Pago para esa cantidad en config.js");
       return;
     }
 
@@ -216,24 +197,26 @@ function setupBuyForm() {
 
       if (!res.ok) throw new Error("form error");
 
-      try {
-        await fetch("/.netlify/functions/save-pending-purchase", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            nombre: nombreInput.value,
-            email: emailInput.value,
-            cantidad: seleccion.cantidad,
-            total: seleccion.total,
-          }),
-        });
-      } catch (pendingErr) {
-        console.error("No se pudo guardar la compra pendiente", pendingErr);
+      const prefRes = await fetch("/.netlify/functions/create-preference", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nombre: nombreInput.value,
+          email: emailInput.value,
+          cantidad: seleccion.cantidad,
+          preventaKey: seleccion.preventaKey,
+        }),
+      });
+
+      const pref = await prefRes.json();
+
+      if (!prefRes.ok || !pref.init_point) {
+        throw new Error("No se pudo generar el pago");
       }
 
-      window.location.href = seleccion.mpLink;
+      window.location.href = pref.init_point;
     } catch (err) {
-      showToast("Hubo un error al registrar tus datos. Probá de nuevo.");
+      showToast("Hubo un error al generar el pago. Probá de nuevo.");
       buyBtn.disabled = false;
       buyBtn.textContent = "ADQUIRIR";
     }
@@ -242,8 +225,8 @@ function setupBuyForm() {
 
 document.addEventListener("DOMContentLoaded", () => {
   fillHeaderAndDescription();
-  setupRow("p1", CONFIG.preventa1);
-  setupRow("p2", CONFIG.preventa2);
+  setupRow("p1", CONFIG.preventa1, CONFIG.maxPorCompra);
+  setupRow("p2", CONFIG.preventa2, CONFIG.maxPorCompra);
   setupBuyForm();
   setupCountdown();
   updateTotal();
