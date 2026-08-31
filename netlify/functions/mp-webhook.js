@@ -12,12 +12,14 @@
 //      si se encontró, a quién se le mandó la tarjeta.
 //
 // Para que funcione necesitás, en el panel de Netlify del sitio:
-//   Site settings > Environment variables > agregar
+//   Site configuration > Environment variables > agregar
 //   MP_ACCESS_TOKEN = tu Access Token de producción de Mercado Pago
 //   RESEND_API_KEY  = tu API key de Resend (resend.com, gratis)
+//   BLOBS_SITE_ID   = el Project ID / Site ID de tu sitio
+//   BLOBS_TOKEN     = un Personal Access Token generado en tu cuenta
 //
 // Y en el panel de desarrolladores de Mercado Pago, configurar el
-// webhook de la app apuntando a:
+// webhook de la app apuntando a (en "Modo productivo"):
 //   https://TU-SITIO.netlify.app/.netlify/functions/mp-webhook
 // (evento: Pagos)
 // ============================================================
@@ -25,22 +27,40 @@
 const { getStore } = require("@netlify/blobs");
 const CONFIG = require("../../config.js");
 
+function getPendingStore() {
+  return getStore({
+    name: "pending-purchases",
+    siteID: process.env.BLOBS_SITE_ID,
+    token: process.env.BLOBS_TOKEN,
+  });
+}
+
 async function buscarCompradorPendiente(monto) {
-  const store = getStore("pending-purchases");
-  const key = `amount-${monto}`;
-  const lista = (await store.get(key, { type: "json" })) || [];
-
-  if (lista.length === 0) return null;
-
-  const comprador = lista.shift(); // el más antiguo primero (FIFO)
-
-  if (lista.length > 0) {
-    await store.setJSON(key, lista);
-  } else {
-    await store.delete(key);
+  if (!process.env.BLOBS_SITE_ID || !process.env.BLOBS_TOKEN) {
+    console.error("Falta configurar BLOBS_SITE_ID / BLOBS_TOKEN en Netlify");
+    return null;
   }
 
-  return comprador;
+  try {
+    const store = getPendingStore();
+    const key = `amount-${monto}`;
+    const lista = (await store.get(key, { type: "json" })) || [];
+
+    if (lista.length === 0) return null;
+
+    const comprador = lista.shift(); // el más antiguo primero (FIFO)
+
+    if (lista.length > 0) {
+      await store.setJSON(key, lista);
+    } else {
+      await store.delete(key);
+    }
+
+    return comprador;
+  } catch (err) {
+    console.error("Error buscando comprador pendiente:", err);
+    return null;
+  }
 }
 
 async function enviarTarjeta(comprador) {
